@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ItemStore.swift
 //  Homepwner
 //
 //  Created by BorkoTomic on 12/27/16.
