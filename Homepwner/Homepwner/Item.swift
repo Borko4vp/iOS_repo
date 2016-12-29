@@ -29,8 +29,8 @@ class Item: NSObject
     {
         if(random)
         {
-            let adjectives=["Fluffy", "Rusty", "Shiny", "Greedy"]
-            let nouns = ["Bear", "Spork", "Mac", "Rabbit"]
+            let adjectives=["Fluffy", "Rusty", "Shiny", "Greedy", "Crazy"]
+            let nouns = ["Bear", "Spork", "Mac", "Rabbit", "SpiderPig"]
             
             var idx = arc4random_uniform(UInt32(nouns.count))
             let randomNoun = nouns[Int(idx)]
