@@ -40,7 +40,8 @@ class ItemStore
         //reinserts the item at toIndex
         allItems.insert(movedItem, at: toIndex)
     }
-    
+    //this is commented out since we implemented method for adding the cells into the table
+    //this can be reused in testing purposes later on
     /*init()
     {
         for _ in 0..<5
