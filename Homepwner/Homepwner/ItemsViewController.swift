@@ -28,7 +28,7 @@ class ItemsViewController : UITableViewController {
         
     }
     
-    @IBAction func toggleEditingMode(sender: AnyObject)
+    /*@IBAction func toggleEditingMode(sender: AnyObject)
     {
         if isEditing
         {
@@ -43,8 +43,13 @@ class ItemsViewController : UITableViewController {
             
             setEditing(true, animated: false)
         }
-    }
+    }*/
 
+    required init? (coder aDecoder: NSCoder)
+    {
+        super.init(coder: aDecoder)
+        navigationItem.leftBarButtonItem = editButtonItem
+    }
     override func tableView(_: UITableView, numberOfRowsInSection:Int) -> Int
     {
         return itemStore.allItems.count
@@ -53,14 +58,22 @@ class ItemsViewController : UITableViewController {
         
         //let cell = 	UITableViewCell(style: .value1, reuseIdentifier: "UITableViewCell")
         let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell", for: indexPath) as! ItemCell
+        
+        //Update the labels for the new preferred text size
+        cell.updateLabels()
         let item = itemStore.allItems[indexPath.row]
         
-        /*
-        cell.textLabel?.text = item.name
-        cell.detailTextLabel?.text = "$\(item.valueInDollars)"*/
+
         cell.nameLabel.text = item.name
         cell.serialNumberLabel.text = item.serialNumber
         cell.valueLabel.text = "$\(item.valueInDollars)"
+        if item.valueInDollars >= 50 {
+            cell.valueLabel.textColor = .red
+        }
+        else {
+            cell.valueLabel.textColor = .green
+        }
+        
         return cell
     }
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -102,16 +115,28 @@ class ItemsViewController : UITableViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        let statusBarHeight = UIApplication.shared.statusBarFrame.height
-        
-        let insets = UIEdgeInsets(top:statusBarHeight, left: 0, bottom: 0, right: 0)
-        
-        tableView.contentInset = insets
-        tableView.scrollIndicatorInsets  = insets
+
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 65
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tableView.reloadData()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if "ShowItem" == segue.identifier
+        {
+            if let row = tableView.indexPathForSelectedRow?.row
+            {
+                let item = itemStore.allItems[row]
+                let detailViewController = segue.destination as! DetailViewController
+                detailViewController.item = item
+            }
+        }
+    }
 
 
 }
