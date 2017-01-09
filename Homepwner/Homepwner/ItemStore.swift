@@ -11,7 +11,14 @@ import UIKit
 class ItemStore
 {
     var allItems = [Item]()
+
     
+    let itemArchiveURL: URL = {
+        //var docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)).first!.appendingPathComponent("items.archive")
+    }()
+    
+
     func createItem() -> Item
     {
         let newItem = Item(random: true)
@@ -40,6 +47,11 @@ class ItemStore
         //reinserts the item at toIndex
         allItems.insert(movedItem, at: toIndex)
     }
+    func saveChanges() -> Bool
+    {
+        print("saving items to: \(itemArchiveURL.path)")
+        return NSKeyedArchiver.archiveRootObject(allItems, toFile: itemArchiveURL.path)
+    }
     //this is commented out since we implemented method for adding the cells into the table
     //this can be reused in testing purposes later on
     /*init()
@@ -49,6 +61,13 @@ class ItemStore
             createItem()
         }
     }*/
+    init()
+    {
+        if let archivedItems = NSKeyedUnarchiver.unarchiveObject(withFile: itemArchiveURL.path) as? [Item]
+        {
+            allItems += archivedItems
+        }
+    }
 
 }
 
