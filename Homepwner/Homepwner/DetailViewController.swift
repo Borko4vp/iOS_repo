@@ -43,9 +43,21 @@ class DetailViewController : UIViewController, UITextFieldDelegate, UINavigation
         imagePicker.delegate = self
         
         imagePicker.allowsEditing = true
+        let overlayView = UIImageView(frame: imagePicker.view.frame)
+        overlayView.image = #imageLiteral(resourceName: "placeholderImage")
+        overlayView.alpha = 0.5
+        imagePicker.cameraOverlayView = overlayView
         present(imagePicker, animated: true, completion: nil)
     }
     
+    @IBAction func deletePicture(_ sender: UIBarButtonItem) {
+        
+        if(nil != imageStore.imageForKey(key: item.itemKey)){
+            imageStore.deleteImageForKey(key: item.itemKey)
+        }
+        
+        imageView.image = #imageLiteral(resourceName: "placeholderImage")
+    }
     let numberFormatter: NumberFormatter = {
     
         let formatter = NumberFormatter()
