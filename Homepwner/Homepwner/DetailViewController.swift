@@ -10,6 +10,15 @@ import UIKit
 
 class DetailViewController : UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
+    var item: Item!
+        {
+        didSet{
+            navigationItem.title = item.name
+        }
+    }
+    
+    var imageStore: ImageStore!
+    
     @IBOutlet var nameField: UITextField!
     @IBOutlet var serialField: UITextField!
     @IBOutlet var valueField: UITextField!
@@ -33,14 +42,8 @@ class DetailViewController : UIViewController, UITextFieldDelegate, UINavigation
         
         imagePicker.delegate = self
         
+        imagePicker.allowsEditing = true
         present(imagePicker, animated: true, completion: nil)
-    }
-    
-    var item: Item!
-    {
-        didSet{
-            navigationItem.title = item.name
-        }
     }
     
     let numberFormatter: NumberFormatter = {
@@ -68,6 +71,19 @@ class DetailViewController : UIViewController, UITextFieldDelegate, UINavigation
         valueField.text = numberFormatter.string(from: item.valueInDollars as NSNumber)
         
         dateLabel.text = dateFormatter.string(from: item.dateCreated as Date)
+        
+        //Grab the key and display the image if there is asociated image for that key
+        
+        let tmpImage = imageStore.imageForKey(key: item.itemKey)
+        
+        if(nil != tmpImage)
+        {
+            imageView.image = tmpImage
+        }
+        else
+        {
+            imageView.image = #imageLiteral(resourceName: "placeholderImage")
+        }
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -102,14 +118,22 @@ class DetailViewController : UIViewController, UITextFieldDelegate, UINavigation
         textField.resignFirstResponder()
         return true
     }
-    @IBAction func backgroubdTapped(_ sender: UITapGestureRecognizer) {
+    @IBAction func backgroundTapped(_ sender: UITapGestureRecognizer) {
         view.endEditing(true)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any])
-    {
-        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]){
+        
+        //Getting an image from UIImagePicker
+        let image = info[UIImagePickerControllerEditedImage] as! UIImage
+        
+        //Setting the image in the image store for the itemKey of an item
+        imageStore.setImage(image: image, forKey: item.itemKey)
+        
+        //Setting the image of the imageVIew to be an image returned from UIImagePIcker
         imageView.image = image
+        
+        // Dissmiss the UIImagePicker view
         dismiss(animated: true, completion: nil)
     }
     
