@@ -25,16 +25,18 @@ class ImageStore {
         //Create full URL for the image to be saved at
         let imageURL  = imageURLForKey(key: key)
         //Turn image into the JPEG data
-        if let data = UIImageJPEGRepresentation(image, 0.5)
+        if let data = UIImagePNGRepresentation(image)
         {
             //write it to full URL
-//////            /////Error handling to be implemented properly
-            do { try data.write(to: imageURL, options: .atomic) }
-            catch{}
-            
+            do
+            {
+                try data.write(to: imageURL, options: .atomic)
+            }
+            catch
+            {
+                print("Error saving image to disk \(error)")
+            }
         }
-        
-        
     }
     func imageForKey(key: String) -> UIImage?
     {
@@ -58,9 +60,14 @@ class ImageStore {
         cache.removeObject(forKey: key as NSString)
         
         let imageURL = imageURLForKey(key: key)
-//////        //Error handling to be implemented properly
-        do { try FileManager.default.removeItem(at: imageURL)}
-        catch{}
+        do
+        {
+            try FileManager.default.removeItem(at: imageURL)
+        }
+        catch let deleteError
+        {
+            print("Error removing image from disk \(deleteError)")
+        }
         
     }
 }
